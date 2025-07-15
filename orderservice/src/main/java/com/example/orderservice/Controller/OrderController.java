@@ -28,9 +28,6 @@ public class OrderController {
     public OrderService orderService;
 
     @Autowired
-    public OrderStatusHistory orderStatusHistory;
-
-    @Autowired
     public OrderHistoryService orderHistoryService;
 
     @Autowired
