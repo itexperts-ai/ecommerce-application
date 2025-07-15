@@ -11,5 +11,6 @@ public interface ApiOrderPath {
     String ORDER_BY_USER_ID = "/user/{userId}";
     String ORDER_BY_STATUS = "/order";
     String ORDER_PAGINATED = "/page/{offset}/{pageSize}";
+    String ORDER_STATUS_HISTORY = "/order/history/{orderId}";
 
 }

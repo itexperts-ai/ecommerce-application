@@ -7,10 +7,10 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "order_status_history")
-@Getter
 @Setter
-public class OrderStatusHistory {
+@Getter
+@Table(name = "Order_History")
+public class OrderHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,8 +21,5 @@ public class OrderStatusHistory {
     private String newStatus;
 
     private LocalDateTime changedAt;
-
-
-
 
 }

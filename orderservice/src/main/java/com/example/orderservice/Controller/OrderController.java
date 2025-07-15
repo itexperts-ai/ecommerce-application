@@ -3,7 +3,7 @@ package com.example.orderservice.Controller;
 import com.example.orderservice.Service.OrderHistoryService;
 import com.example.orderservice.entity.Order;
 import com.example.orderservice.Service.OrderService;
-import com.example.orderservice.entity.OrderStatusHistory;
+import com.example.orderservice.entity.OrderHistory;
 import com.example.orderservice.impl.RestTemplateProvider;
 import com.example.orderservice.entity.UserEntity;
 import com.example.orderservice.util.ApiOrderPath;
@@ -27,8 +27,7 @@ public class OrderController {
     @Autowired
     public OrderService orderService;
 
-    @Autowired
-    public OrderHistoryService orderHistoryService;
+
 
     @Autowired
     private RestTemplateProvider restTemplateProvider;
@@ -108,6 +107,18 @@ public class OrderController {
         }else{
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order Not Found.");
         }
+    }
+
+    @Autowired
+    private OrderHistoryService orderHistoryService;
+
+    @GetMapping(ApiOrderPath.ORDER_STATUS_HISTORY)
+    public ResponseEntity<List<OrderHistory>>getOrderStatusHistory(@PathVariable Long orderId){
+        List<OrderHistory> histories = orderHistoryService.getHistoryByOrderId(orderId);
+        if (histories.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(histories);
     }
 
     @GetMapping(ApiOrderPath.ORDER_PAGINATED)
