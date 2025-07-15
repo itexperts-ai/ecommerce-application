@@ -40,7 +40,6 @@ public class UserServiceImpl implements UserService {
         return savedUser;
     }
 
-
     @Transactional(readOnly = true)
     public Optional<UserEntity> login(UserLogin req) {
         logger.info("Login request for email: {}",req.getEmail());
@@ -50,7 +49,6 @@ public class UserServiceImpl implements UserService {
 
         return user;
     }
-
 
     @Override
     @Transactional(readOnly = true)
@@ -67,43 +65,74 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-
-    public List<UserEntity> getalluser(){
+    public List<UserEntity> getalluser() {
+        logger.info("Fetching all users from the database");
         return userRepository.findAll();
     }
 
     public UserEntity updateuser(Long id, UserEntity userEntity) {
-            UserEntity existingUser = userRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+        logger.info("Updating user with ID: {}", id);
 
-            existingUser.setPhone(userEntity.getPhone());
-            existingUser.setAddress(userEntity.getAddress());
+        UserEntity existingUser = userRepository.findById(id)
+                .orElseThrow(() -> {
+                    logger.error("User not found with ID: {}", id);
+                    return new RuntimeException("User not found");
+                });
 
-            return userRepository.save(existingUser);
-        }
+        existingUser.setPhone(userEntity.getPhone());
+        existingUser.setAddress(userEntity.getAddress());
+
+        UserEntity updatedUser = userRepository.save(existingUser);
+        logger.info("User updated successfully with ID: {}", updatedUser.getId());
+
+        return updatedUser;
+    }
 
     public void deactivateUser(String username) {
+        logger.info("Deactivating user: {}", username);
+
         UserEntity user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> {
+                    logger.error("User not found with username: {}", username);
+                    return new RuntimeException("User not found");
+                });
+
         user.setActive(false);
         userRepository.save(user);
+
+        logger.info("User {} deactivated successfully", username);
     }
 
     public void activateUser(String username) {
+        logger.info("Activating user: {}", username);
+
         UserEntity user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> {
+                    logger.error("User not found with username: {}", username);
+                    return new RuntimeException("User not found");
+                });
+
         user.setActive(true);
         userRepository.save(user);
 
+        logger.info("User {} activated successfully", username);
     }
 
     public List<UserEntity> filterUsersByName(String character) {
-       // String prefix = character.trim().substring(0,1);
-        return userRepository.findByUsernameStartingWith(character.trim().toLowerCase());
+        logger.info("Filtering users by starting character: {}", character);
+
+        List<UserEntity> users = userRepository.findByUsernameStartingWith(character.trim().toLowerCase());
+        logger.info("Found {} users starting with: {}", users.size(), character);
+
+        return users;
     }
 
-    public Page<UserEntity>  findUsersByPage(int offset, int pageSize) {
-       Page<UserEntity> userEntities = userRepository.findAll(PageRequest.of(offset,pageSize));
-       return userEntities;
+    public Page<UserEntity> findUsersByPage(int offset, int pageSize) {
+        logger.info("Fetching users with pagination - offset: {}, pageSize: {}", offset, pageSize);
+
+        Page<UserEntity> userPage = userRepository.findAll(PageRequest.of(offset, pageSize));
+        logger.info("Page contains {} users", userPage.getNumberOfElements());
+
+        return userPage;
     }
 }

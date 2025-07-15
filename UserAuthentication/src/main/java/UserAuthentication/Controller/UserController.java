@@ -59,54 +59,77 @@ public class UserController {
     }
 
     @GetMapping(GETALLUSERS)
-    public ResponseEntity<List<UserEntity>> getAllUsers()
-    {
+    public ResponseEntity<List<UserEntity>> getAllUsers() {
+        logger.info("Request received to fetch all users");
+
         List<UserEntity> users = userService.getalluser();
-        if(users.isEmpty())
-        {
+
+        if (users.isEmpty()) {
+            logger.warn("No users found in database");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(users,HttpStatus.OK);
+
+        logger.info("Returning {} users", users.size());
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<UserEntity> updateuser(@PathVariable Long id, @RequestBody UserEntity userEntity)
-    {
-        UserEntity user = userService.updateuser(id,userEntity);
-        return new ResponseEntity<>(user,HttpStatus.OK);
+    public ResponseEntity<UserEntity> updateuser(@PathVariable Long id, @RequestBody UserEntity userEntity) {
+        logger.info("Request received to update user with ID: {}", id);
+
+        UserEntity updatedUser = userService.updateuser(id, userEntity);
+
+        logger.info("User updated successfully with ID: {}", updatedUser.getId());
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
     @PostMapping("/deactivate/{username}")
     public ResponseEntity<String> deactivateUser(@PathVariable String username) {
+        logger.info("Request received to deactivate user: {}", username);
+
         userService.deactivateUser(username);
+
+        logger.info("User {} deactivated successfully", username);
         return ResponseEntity.ok("User deactivated successfully");
     }
 
     @PostMapping("/activate/{username}")
     public ResponseEntity<String> activateUser(@PathVariable String username) {
+        logger.info("Request received to activate user: {}", username);
+
         userService.activateUser(username);
+
+        logger.info("User {} activated successfully", username);
         return ResponseEntity.ok("User activated successfully");
     }
 
-    @GetMapping("/filter/{chararcter}")
-    public ResponseEntity<List<UserEntity>> filterUsersByName(@PathVariable String chararcter) {
-        List<UserEntity> users = userService.filterUsersByName(chararcter);
-        if(users.isEmpty())
-        {
+    @GetMapping("/filter/{character}")
+    public ResponseEntity<List<UserEntity>> filterUsersByName(@PathVariable String character) {
+        logger.info("Filtering users by character: {}", character);
+
+        List<UserEntity> users = userService.filterUsersByName(character);
+
+        if (users.isEmpty()) {
+            logger.warn("No users found starting with: {}", character);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(users,HttpStatus.OK);
+
+        logger.info("Found {} users starting with: {}", users.size(), character);
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping("/page/{offset}/{pageSize}")
-    public ResponseEntity<Page<UserEntity>> getUsersByPage(@PathVariable int offset,@PathVariable int pageSize){
-        Page<UserEntity> users = userService.findUsersByPage(offset,pageSize);
-        if(users.isEmpty())
-        {
+    public ResponseEntity<Page<UserEntity>> getUsersByPage(@PathVariable int offset, @PathVariable int pageSize) {
+        logger.info("Request received for paginated users - offset: {}, pageSize: {}", offset, pageSize);
+
+        Page<UserEntity> users = userService.findUsersByPage(offset, pageSize);
+
+        if (users.isEmpty()) {
+            logger.warn("No users found for the given page parameters");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(users,HttpStatus.OK);
 
-
+        logger.info("Returning page with {} users", users.getNumberOfElements());
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 }
