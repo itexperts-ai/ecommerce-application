@@ -71,6 +71,7 @@ public class UserHelper {
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
         user.setActive(request.isActive());
+        user.setAge(request.getAge());
         user.setPhone(request.getPhone());
         user.setAddress(request.getAddress());
 

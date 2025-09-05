@@ -1,14 +1,19 @@
 package UserAuthentication.Service;
 
+import UserAuthentication.DTO.PageResponse;
+import UserAuthentication.DTO.SearchRequest;
 import UserAuthentication.DTO.UserLogin;
 import UserAuthentication.DTO.UserRegister;
 import UserAuthentication.Entity.UserEntity;
 import UserAuthentication.Helper.UserHelper;
+import UserAuthentication.Helper.UserSpecification;
 import UserAuthentication.Repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
@@ -24,10 +29,14 @@ public class UserServiceImpl implements UserService {
     private static final Logger logger = (Logger) LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     private UserHelper userHelper;
+
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Transactional
     public UserEntity registerUser(UserRegister request) {
@@ -59,7 +68,7 @@ public class UserServiceImpl implements UserService {
         if (user.isPresent()) {
             logger.info("User found: ");
         } else {
-            logger.warn("User not found for ID: ");
+            logger.warn("User not found for ID: "+ id);
         }
 
         return user;
@@ -134,5 +143,24 @@ public class UserServiceImpl implements UserService {
         logger.info("Page contains {} users", userPage.getNumberOfElements());
 
         return userPage;
+    }
+
+    public PageResponse<UserEntity> searchUsers(SearchRequest request){
+        var spec = UserSpecification.buildFilter(request.getFilters());
+
+        Sort sort = Sort.unsorted();
+        if(request.getSort() != null){
+            for(var s : request.getSort()){
+                sort = sort.and(Sort.by(
+                        "DESC".equalsIgnoreCase(s.getDirection()) ? Sort.Direction.DESC : Sort.Direction.ASC,
+                        s.getField()
+                ));
+            }
+        }
+
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize(), sort);
+
+        Page<UserEntity> page = userRepository.findAll(spec, pageable);
+        return new PageResponse<>(page);
     }
 }

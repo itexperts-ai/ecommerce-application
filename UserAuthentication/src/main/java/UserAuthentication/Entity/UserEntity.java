@@ -1,33 +1,41 @@
 package UserAuthentication.Entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 
 
 @Entity
 public class UserEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
     private String email;
     private String password;
     private boolean active= true;
+    private int age;
     private String phone;
     private String address;
+    private LocalDateTime createdTime;
 
+    @PrePersist
+    protected void onCreate() {
+        this.createdTime = LocalDateTime.now();
+    }
 
     public UserEntity(){}
-    public UserEntity(Long id, String username, String email, String password, boolean active, String phone, String address) {
+
+    public UserEntity(Long id, String username, String email, String password, boolean active, int age, String phone, String address, LocalDateTime createdTime) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
         this.active = active;
+        this.age = age;
         this.phone = phone;
         this.address = address;
+        this.createdTime = createdTime;
     }
 
     public Long getId() {
@@ -62,13 +70,20 @@ public class UserEntity {
         this.password = password;
     }
 
-    public boolean getActive() {
+    public boolean isActive() {
         return active;
     }
 
-    public boolean setActive(boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
-        return active;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 
     public String getPhone() {
@@ -85,5 +100,13 @@ public class UserEntity {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public LocalDateTime getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(LocalDateTime createdTime) {
+        this.createdTime = createdTime;
     }
 }

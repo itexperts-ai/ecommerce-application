@@ -1,5 +1,7 @@
 package UserAuthentication.Controller;
 
+import UserAuthentication.DTO.PageResponse;
+import UserAuthentication.DTO.SearchRequest;
 import UserAuthentication.DTO.UserLogin;
 import UserAuthentication.DTO.UserRegister;
 import UserAuthentication.Entity.UserEntity;
@@ -131,5 +133,10 @@ public class UserController {
 
         logger.info("Returning page with {} users", users.getNumberOfElements());
         return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @PostMapping("/search")
+    public PageResponse<UserEntity> searchUsers(@RequestBody SearchRequest request){
+        return userService.searchUsers(request);
     }
 }

@@ -5,17 +5,19 @@ public class UserRegister {
     private String email;
     private String password;
     private boolean active;
+    private int age;
     private String phone;
     private String address;
 
 
     public UserRegister(){}
 
-    public UserRegister(String name, String email, String password, boolean active, String phone, String address) {
+    public UserRegister(String name, String email, String password, boolean active, int age, String phone, String address) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.active = active;
+        this.age = age;
         this.phone = phone;
         this.address = address;
     }
@@ -51,6 +53,10 @@ public class UserRegister {
     public void setActive(boolean active) {
         this.active = active;
     }
+
+    public int getAge() {return age;}
+
+    public void setAge(int age){this.age = age;}
 
     public String getPhone() {
         return phone;
